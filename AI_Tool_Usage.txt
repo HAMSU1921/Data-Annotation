@@ -1,0 +1,48 @@
+I have used ChatGPT for Below Codes
+
+1.def extract_with_cache(field, text, pattern_cache):
+    """
+    Extract the data for a given field using cached regex patterns.
+
+    Args:
+    field (str): The field to extract (e.g., 'Invoice Number').
+    text (str): The invoice text to search within.
+    pattern_cache (dict): Cached regex patterns for common fields.
+
+    Returns:
+    str: Extracted value or 'N/A' if not found.
+    """
+    # Check if the field has a cached pattern
+    if field in pattern_cache:
+        match = pattern_cache[field].search(text)
+        # Return the extracted value if a match is found
+        if match:
+            return match.group(1).strip()
+    
+    # Return 'N/A' if the field is not found or no match is found
+    return "N/A"
+2.import re
+
+def extract_table_data(text_pages):
+    table_data = []
+    
+    for page in text_pages:
+        try:
+            # Find table rows using a regex pattern for row data
+            rows = re.findall(r'([a-zA-Z\s]+)\|\s*(\d+)\s*\|\s*([0-9,\.]+ €)\s*\|\s*([0-9,\.]+ €)', page)
+            
+            for row in rows:
+                table_data.append({
+                    "Description": row[0].strip(),
+                    "Quantity": row[1].strip(),
+                    "Unit Price": row[2].strip(),
+                    "Total": row[3].strip()
+                })
+                
+            if not rows:
+                print("No rows found on this page.")
+                
+        except Exception as e:
+            print(f"Error while extracting table data on this page: {str(e)}")
+    
+    return table_data
